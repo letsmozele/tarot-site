@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2, BookOpen, Star } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import CardPicker from "./CardPicker";
 import CardInReading from "./CardInReading";
 import { ReadingCard, TarotCard, DeckType } from "@/lib/types";
@@ -30,9 +30,7 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
 
   const toggleReversed = (index: number) => {
     setCards((prev) =>
-      prev.map((item, i) =>
-        i === index ? { ...item, reversed: !item.reversed } : item
-      )
+      prev.map((item, i) => (i === index ? { ...item, reversed: !item.reversed } : item))
     );
   };
 
@@ -44,16 +42,16 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
 
   const clearAll = () => {
     if (cards.length === 0) return;
-    if (confirm("Limpar toda a leitura?")) setCards([]);
+    if (confirm("Limpar toda a leitura atual?")) setCards([]);
   };
 
   const excludeIds = cards.map((c) => c.card.id);
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      {/* Reading header */}
-      <div className="flex items-center gap-3 mb-5">
-        <BookOpen size={16} className="text-[#c9a84c] shrink-0" />
+
+      {/* ── Topo da leitura ── */}
+      <div className="flex items-center gap-3 mb-6">
         {editingTitle ? (
           <input
             autoFocus
@@ -62,13 +60,14 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
             onBlur={() => setEditingTitle(false)}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === "Escape") setEditingTitle(false); }}
             placeholder="Nome da leitura..."
-            className="flex-1 bg-transparent border-b border-purple-700/50 text-[#e8e0f0] outline-none text-sm pb-0.5"
+            className="flex-1 bg-transparent border-b border-[#c4a86a]/60 text-[#1c0e04] outline-none font-display text-sm pb-0.5 placeholder-[#9a7332]/40"
           />
         ) : (
           <button
             onClick={() => setEditingTitle(true)}
-            className="text-sm text-purple-400 hover:text-[#c9a84c] transition-colors text-left"
+            className="font-display text-sm tracking-wide text-[#9a7332]/60 hover:text-[#9a7332] transition-colors text-left flex items-center gap-1.5"
           >
+            <span className="text-[#c4a86a]">✦</span>
             {readingTitle || "Clique para nomear esta leitura"}
           </button>
         )}
@@ -77,44 +76,70 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
           {cards.length > 0 && (
             <button
               onClick={clearAll}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-red-400 hover:text-red-300 border border-red-800/30 hover:border-red-700/50 rounded-lg transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] uppercase tracking-wider text-[#b05030]/60 hover:text-[#6b1a1a] border border-[#e8c8b0] hover:border-[#d49070] rounded-lg transition-all"
             >
-              <Trash2 size={12} />
+              <Trash2 size={11} />
               Limpar
             </button>
           )}
           <button
             onClick={() => setShowPicker(true)}
             disabled={cards.length >= 15}
-            className="flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium bg-[#c9a84c]/20 hover:bg-[#c9a84c]/30 text-[#f0d080] border border-[#c9a84c]/30 hover:border-[#c9a84c]/50 rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 px-4 py-1.5 text-xs font-medium bg-[#1c0e04] hover:bg-[#3a2010] text-[#e8d898] rounded-xl transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <Plus size={14} />
+            <Plus size={13} />
             Adicionar carta
           </button>
         </div>
       </div>
 
-      {/* Empty state */}
+      {/* ── Estado vazio ── */}
       {cards.length === 0 && (
-        <div className="flex-1 flex flex-col items-center justify-center py-20 text-center">
-          <div className="text-5xl mb-5 opacity-30">✦</div>
-          <h2 className="text-lg font-medium text-purple-300/60 mb-2">Sua leitura está vazia</h2>
-          <p className="text-sm text-purple-500/50 mb-6 max-w-xs leading-relaxed">
-            Clique em <span className="text-[#c9a84c]/70">Adicionar carta</span> para selecionar as cartas que saíram na sua leitura
+        <div className="flex-1 flex flex-col items-center justify-center py-16 text-center select-none">
+          {/* Ilustração ornamental */}
+          <div className="relative mb-8">
+            {/* Círculo externo */}
+            <div className="w-32 h-32 rounded-full border border-[#ddd0a8] flex items-center justify-center relative">
+              {/* Círculo interno */}
+              <div className="w-20 h-20 rounded-full border border-[#c4a86a]/40 flex items-center justify-center">
+                <span className="text-4xl text-[#c4a86a]/50" style={{ fontFamily: "Georgia, serif" }}>✦</span>
+              </div>
+              {/* Ornamentos nos 4 lados */}
+              <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[#c4a86a]/40 text-xs">☽</span>
+              <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[#c4a86a]/40 text-xs">◈</span>
+              <span className="absolute -left-2 top-1/2 -translate-y-1/2 text-[#c4a86a]/40 text-xs">⊕</span>
+              <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-[#c4a86a]/40 text-xs">✦</span>
+            </div>
+          </div>
+
+          <h2 className="font-display text-lg font-semibold tracking-widest text-[#1c0e04]/50 uppercase mb-2">
+            Grimório Vazio
+          </h2>
+          <p className="text-sm text-[#9a7332]/60 mb-1 max-w-xs leading-relaxed">
+            Embaralhe suas cartas, faça sua pergunta ao universo
           </p>
+          <p className="text-xs text-[#9a7332]/40 mb-8 max-w-xs">
+            e selecione cada carta que saiu na sua tiragem
+          </p>
+
           <button
             onClick={() => setShowPicker(true)}
-            className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-[#c9a84c]/20 hover:bg-[#c9a84c]/30 text-[#f0d080] border border-[#c9a84c]/30 hover:border-[#c9a84c]/50 rounded-xl transition-all pulse-gold"
+            className="breathe-gold flex items-center gap-2 px-6 py-2.5 text-sm font-medium bg-[#1c0e04] hover:bg-[#3a2010] text-[#e8d898] rounded-xl transition-all"
           >
-            <Star size={14} />
-            Começar leitura
+            <span>✦</span>
+            Iniciar leitura
           </button>
+
+          {/* Dica */}
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#c4a86a]/40 mt-8">
+            78 cartas · Rider-Waite-Smith & Thoth
+          </p>
         </div>
       )}
 
-      {/* Cards */}
+      {/* ── Lista de cartas ── */}
       {cards.length > 0 && (
-        <div className="grid grid-cols-1 gap-3 overflow-y-auto">
+        <div className="space-y-3">
           {cards.map((item, i) => (
             <CardInReading
               key={`${item.card.id}-${i}`}
@@ -127,20 +152,20 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
             />
           ))}
 
-          {/* Add more button at bottom of list */}
+          {/* Botão de adicionar mais */}
           {cards.length < 15 && (
             <button
               onClick={() => setShowPicker(true)}
-              className="w-full py-3 border-2 border-dashed border-purple-800/30 rounded-2xl text-purple-600 hover:border-purple-700/50 hover:text-purple-400 transition-all text-sm flex items-center justify-center gap-2"
+              className="w-full py-3 border border-dashed border-[#c4a86a]/40 rounded-2xl text-[#9a7332]/60 hover:border-[#9a7332]/60 hover:text-[#9a7332] hover:bg-[#faf4e8] transition-all text-xs flex items-center justify-center gap-2 font-display uppercase tracking-wider"
             >
-              <Plus size={14} />
-              Adicionar mais uma carta
+              <Plus size={12} />
+              Adicionar carta
             </button>
           )}
         </div>
       )}
 
-      {/* Card Picker Modal */}
+      {/* ── Modal picker ── */}
       {showPicker && (
         <CardPicker
           onSelect={addCard}

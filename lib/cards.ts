@@ -1,5 +1,5 @@
 import tarotData from "@/data/tarot.json";
-import { TarotDatabase, TarotCard } from "./types";
+import { TarotDatabase, TarotCard, DeckType } from "./types";
 
 const db = tarotData as TarotDatabase;
 
@@ -19,16 +19,24 @@ export function getCardsBySuit(suit: string): TarotCard[] {
   return db.cards.filter((c) => c.suit === suit);
 }
 
+function normalize(s: string) {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+}
+
 export function searchCards(query: string): TarotCard[] {
-  const q = query.toLowerCase().trim();
+  const q = normalize(query.trim());
   if (!q) return db.cards;
   return db.cards.filter(
     (c) =>
-      c.name_pt.toLowerCase().includes(q) ||
-      c.name_en.toLowerCase().includes(q) ||
-      c.thoth_name.toLowerCase().includes(q) ||
-      c.keywords_upright.some((k) => k.toLowerCase().includes(q)) ||
-      (c.suit && c.suit.toLowerCase().includes(q))
+      normalize(c.name_pt).includes(q) ||
+      normalize(c.name_en).includes(q) ||
+      normalize(c.thoth_name).includes(q) ||
+      c.keywords_upright.some((k) => normalize(k).includes(q)) ||
+      c.keywords_reversed.some((k) => normalize(k).includes(q)) ||
+      (c.suit && normalize(c.suit).includes(q))
   );
 }
 
@@ -36,23 +44,67 @@ export function getCardById(id: string): TarotCard | undefined {
   return db.cards.find((c) => c.id === id);
 }
 
+export function getCardDisplayName(card: TarotCard, deck: DeckType): string {
+  return deck === "thoth" ? card.thoth_name : card.name_pt;
+}
+
+export function getCardMeaning(
+  card: TarotCard,
+  deck: DeckType,
+  reversed: boolean
+): string {
+  if (reversed) return card.meaning_reversed;
+  return deck === "thoth" ? card.thoth_meaning || card.meaning_upright : card.meaning_upright;
+}
+
 export const SUITS = ["Copas", "Paus", "Espadas", "Ouros"] as const;
-export const SUIT_COLORS: Record<string, string> = {
-  Copas: "text-blue-300 border-blue-400",
-  Paus: "text-orange-300 border-orange-400",
-  Espadas: "text-slate-300 border-slate-400",
-  Ouros: "text-yellow-300 border-yellow-500",
-};
-export const SUIT_BG: Record<string, string> = {
-  Copas: "bg-blue-950/40 border-blue-800/40",
-  Paus: "bg-orange-950/40 border-orange-800/40",
-  Espadas: "bg-slate-800/40 border-slate-600/40",
-  Ouros: "bg-yellow-950/40 border-yellow-800/40",
+
+export const SUIT_META: Record<
+  string,
+  { symbol: string; element: string; thoth: string; color: string; bg: string; badge: string }
+> = {
+  Copas: {
+    symbol: "☽",
+    element: "Água",
+    thoth: "Cups",
+    color: "text-[#1e4d8c]",
+    bg: "bg-[#eef3ff]",
+    badge: "border-[#bfcfef] text-[#1e4d8c]",
+  },
+  Paus: {
+    symbol: "✦",
+    element: "Fogo",
+    thoth: "Wands",
+    color: "text-[#7a2e0a]",
+    bg: "bg-[#fff3ed]",
+    badge: "border-[#f0c8a8] text-[#7a2e0a]",
+  },
+  Espadas: {
+    symbol: "⊕",
+    element: "Ar",
+    thoth: "Swords",
+    color: "text-[#2a3a4a]",
+    bg: "bg-[#f0f4f8]",
+    badge: "border-[#c0ced8] text-[#2a3a4a]",
+  },
+  Ouros: {
+    symbol: "◈",
+    element: "Terra",
+    thoth: "Disks",
+    color: "text-[#6b5012]",
+    bg: "bg-[#fffae8]",
+    badge: "border-[#e0c870] text-[#6b5012]",
+  },
 };
 
+// Keep legacy export for backward compat
+export const SUIT_COLORS: Record<string, string> = Object.fromEntries(
+  Object.entries(SUIT_META).map(([k, v]) => [k, `${v.color} border-current`])
+);
+
 export const ELEMENT_SYMBOLS: Record<string, string> = {
-  Fogo: "🔥",
-  Água: "💧",
-  Ar: "💨",
-  Terra: "🌿",
+  Fogo: "✦",
+  Água: "☽",
+  Ar: "⊕",
+  Terra: "◈",
 };

@@ -43,3 +43,6 @@ export interface ReadingCard {
 }
 
 export type DeckType = "rws" | "thoth";
+
+export type SuitName = "Copas" | "Paus" | "Espadas" | "Ouros";
+export type FilterType = "all" | "major" | SuitName;

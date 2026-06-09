@@ -8,36 +8,47 @@ export default function Home() {
   const [deckType, setDeckType] = useState<DeckType>("rws");
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#08050f]">
-      {/* Header */}
-      <header className="border-b border-purple-900/30 backdrop-blur-sm bg-[#08050f]/80 sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-4">
-          {/* Logo */}
+    <div className="min-h-screen flex flex-col bg-[#faf4e8]">
+      {/* ─── Header ─── */}
+      <header className="sticky top-0 z-40 bg-[#faf4e8]/95 backdrop-blur-sm border-b border-[#ddd0a8]">
+        <div className="max-w-3xl mx-auto px-5 py-3 flex items-center gap-4">
+
+          {/* Logotipo */}
           <div className="flex items-center gap-2.5">
-            <span className="text-xl text-[#c9a84c]">✦</span>
+            <span className="text-lg text-[#9a7332] leading-none" style={{ fontFamily: "Georgia, serif" }}>✦</span>
             <div>
-              <h1 className="text-sm font-semibold text-[#e8e0f0] leading-tight text-glow">Tarot</h1>
-              <p className="text-[10px] text-purple-500 leading-tight">Leitura de Cartas</p>
+              <h1 className="font-display text-sm font-semibold tracking-widest text-[#1c0e04] uppercase leading-tight">
+                Tarot
+              </h1>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-[#9a7332] leading-tight">
+                Grimório de Leitura
+              </p>
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-1 bg-purple-950/50 border border-purple-800/30 rounded-xl p-1">
+          {/* Ornamento central */}
+          <div className="hidden sm:flex flex-1 items-center justify-center gap-3 text-[#c4a86a] text-xs opacity-50 select-none">
+            <span>─── ✦ ───</span>
+          </div>
+
+          {/* Toggle de baralho */}
+          <div className="ml-auto flex items-center gap-1 bg-[#f0e6d0] border border-[#ddd0a8] rounded-lg p-0.5">
             <button
               onClick={() => setDeckType("rws")}
-              className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-all tracking-wide ${
                 deckType === "rws"
-                  ? "bg-[#c9a84c]/20 text-[#f0d080] border border-[#c9a84c]/30"
-                  : "text-purple-500 hover:text-purple-300"
+                  ? "bg-[#fffcf5] text-[#9a7332] border border-[#c4a86a] shadow-sm"
+                  : "text-[#7a6040] hover:text-[#4a3520]"
               }`}
             >
               Rider-Waite
             </button>
             <button
               onClick={() => setDeckType("thoth")}
-              className={`px-3 py-1 text-xs font-medium rounded-lg transition-all ${
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-all tracking-wide ${
                 deckType === "thoth"
-                  ? "bg-[#c9a84c]/20 text-[#f0d080] border border-[#c9a84c]/30"
-                  : "text-purple-500 hover:text-purple-300"
+                  ? "bg-[#fffcf5] text-[#9a7332] border border-[#c4a86a] shadow-sm"
+                  : "text-[#7a6040] hover:text-[#4a3520]"
               }`}
             >
               Thoth
@@ -46,14 +57,14 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main */}
-      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-6 flex flex-col">
+      {/* ─── Main ─── */}
+      <main className="flex-1 max-w-3xl mx-auto w-full px-4 py-8 flex flex-col">
         <ReadingBoard deckType={deckType} />
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-purple-900/20 py-3 text-center">
-        <p className="text-xs text-purple-700/50">
+      {/* ─── Footer ─── */}
+      <footer className="border-t border-[#ddd0a8] py-4 text-center">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#9a7332]/60">
           78 cartas · Rider-Waite-Smith & Thoth · Arcanos Maiores e Menores
         </p>
       </footer>

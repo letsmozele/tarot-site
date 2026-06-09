@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { X, Search, ChevronDown, ChevronUp } from "lucide-react";
-import { getAllCards, SUITS, SUIT_COLORS } from "@/lib/cards";
-import { TarotCard } from "@/lib/types";
+import { getAllCards, SUITS, SUIT_META } from "@/lib/cards";
+import { TarotCard, FilterType } from "@/lib/types";
 
 interface CardPickerProps {
   onSelect: (card: TarotCard) => void;
@@ -11,7 +11,9 @@ interface CardPickerProps {
   excludeIds?: string[];
 }
 
-type FilterType = "all" | "major" | "Copas" | "Paus" | "Espadas" | "Ouros";
+function normalize(s: string) {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
 
 export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardPickerProps) {
   const [query, setQuery] = useState("");
@@ -26,124 +28,190 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
 
   const filtered = useMemo(() => {
     let cards = allCards.filter((c) => !excludeIds.includes(c.id));
-
     if (filter === "major") cards = cards.filter((c) => c.arcana === "major");
     else if (filter !== "all") cards = cards.filter((c) => c.suit === filter);
-
     if (query.trim()) {
-      const q = query.toLowerCase();
+      const q = normalize(query);
       cards = cards.filter(
         (c) =>
-          c.name_pt.toLowerCase().includes(q) ||
-          c.name_en.toLowerCase().includes(q) ||
-          c.thoth_name.toLowerCase().includes(q) ||
-          c.keywords_upright.some((k) => k.toLowerCase().includes(q))
+          normalize(c.name_pt).includes(q) ||
+          normalize(c.name_en).includes(q) ||
+          normalize(c.thoth_name).includes(q) ||
+          c.keywords_upright.some((k) => normalize(k).includes(q))
       );
     }
     return cards;
   }, [allCards, query, filter, excludeIds]);
 
-  const filters: { key: FilterType; label: string }[] = [
+  const filters: { key: FilterType; label: string; symbol?: string }[] = [
     { key: "all", label: "Todas" },
-    { key: "major", label: "Arcanos Maiores" },
-    ...SUITS.map((s) => ({ key: s as FilterType, label: s })),
+    { key: "major", label: "Arcanos Maiores", symbol: "✦" },
+    ...SUITS.map((s) => ({ key: s as FilterType, label: s, symbol: SUIT_META[s].symbol })),
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      onClick={onClose}
+    >
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-[#1c0e04]/40 backdrop-blur-[2px]" />
+
+      {/* Modal */}
       <div
-        className="relative w-full max-w-2xl bg-[#0f0820] border border-purple-800/60 rounded-2xl shadow-2xl flex flex-col max-h-[88vh] animate-slide-up"
+        className="relative w-full sm:max-w-xl bg-[#fffcf5] border border-[#c4a86a] rounded-t-3xl sm:rounded-2xl shadow-2xl flex flex-col max-h-[90vh] sm:max-h-[84vh] animate-slide-up"
         onClick={(e) => e.stopPropagation()}
+        style={{ boxShadow: "0 -4px 32px rgba(28,14,4,0.12), 0 0 0 1px rgba(201,168,76,0.15)" }}
       >
-        {/* Header */}
-        <div className="flex items-center gap-3 p-4 border-b border-purple-900/50">
-          <Search size={18} className="text-purple-400 shrink-0" />
+        {/* Handle (mobile) */}
+        <div className="sm:hidden flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-[#c4a86a]/40" />
+        </div>
+
+        {/* Header ornamental */}
+        <div className="px-5 pt-4 pb-1 text-center">
+          <p className="font-display text-[10px] uppercase tracking-[0.25em] text-[#9a7332] mb-0.5">
+            ✦ Escolha uma carta ✦
+          </p>
+        </div>
+
+        {/* Search */}
+        <div className="flex items-center gap-2 mx-4 mb-3 px-3 py-2 bg-[#faf4e8] border border-[#ddd0a8] rounded-xl">
+          <Search size={14} className="text-[#9a7332] shrink-0" />
           <input
             ref={searchRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar carta..."
-            className="flex-1 bg-transparent text-[#e8e0f0] placeholder-purple-600 outline-none text-sm"
+            placeholder="Buscar por nome ou palavra-chave..."
+            className="flex-1 bg-transparent text-[#1c0e04] placeholder-[#9a7332]/50 outline-none text-sm"
           />
-          <button onClick={onClose} className="text-purple-500 hover:text-purple-300 transition-colors">
-            <X size={18} />
-          </button>
+          {query && (
+            <button onClick={() => setQuery("")} className="text-[#9a7332]/60 hover:text-[#9a7332]">
+              <X size={13} />
+            </button>
+          )}
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 px-4 py-3 border-b border-purple-900/40 overflow-x-auto scrollbar-hide">
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              className={`shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                filter === f.key
-                  ? "bg-purple-700 text-white"
-                  : "bg-purple-950/50 text-purple-400 hover:bg-purple-900/50 hover:text-purple-200"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+        <div className="flex gap-1.5 px-4 pb-3 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          {filters.map((f) => {
+            const isActive = filter === f.key;
+            const meta = f.key !== "all" && f.key !== "major" ? SUIT_META[f.key] : null;
+            return (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className={`shrink-0 inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-all border ${
+                  isActive
+                    ? "bg-[#1c0e04] text-[#e8d898] border-[#1c0e04]"
+                    : meta
+                    ? `${meta.bg} ${meta.badge} border hover:opacity-80`
+                    : "bg-[#f0e6d0] text-[#4a3520] border-[#ddd0a8] hover:border-[#c4a86a]"
+                }`}
+              >
+                {f.symbol && <span>{f.symbol}</span>}
+                {f.label}
+              </button>
+            );
+          })}
         </div>
 
+        {/* Divider */}
+        <div className="mx-4 h-px bg-gradient-to-r from-transparent via-[#c4a86a]/40 to-transparent mb-1" />
+
         {/* Card List */}
-        <div className="overflow-y-auto flex-1 p-3 space-y-1">
+        <div className="overflow-y-auto flex-1 px-3 py-2 space-y-0.5">
           {filtered.length === 0 && (
-            <p className="text-center text-purple-600 py-12 text-sm">Nenhuma carta encontrada</p>
+            <div className="text-center py-14">
+              <p className="text-[#9a7332]/50 text-sm font-display">Nenhuma carta encontrada</p>
+              <p className="text-[#9a7332]/30 text-xs mt-1">Tente outro nome ou palavra-chave</p>
+            </div>
           )}
+
           {filtered.map((card) => {
             const isExpanded = expandedId === card.id;
-            const suitColor = card.suit ? SUIT_COLORS[card.suit]?.split(" ")[0] : "text-purple-300";
+            const meta = card.suit ? SUIT_META[card.suit] : null;
+            const numStr =
+              card.arcana === "major"
+                ? typeof card.number === "number"
+                  ? card.number.toString().padStart(2, "0")
+                  : card.number
+                : card.number;
 
             return (
-              <div key={card.id} className="rounded-xl overflow-hidden border border-transparent hover:border-purple-800/40 transition-all">
+              <div
+                key={card.id}
+                className="rounded-xl overflow-hidden border border-transparent hover:border-[#ddd0a8] transition-all"
+              >
+                {/* Row */}
                 <div
-                  className="flex items-center gap-3 px-3 py-2.5 cursor-pointer hover:bg-purple-950/40 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 px-2.5 py-2 cursor-pointer hover:bg-[#faf4e8] rounded-xl transition-colors"
                   onClick={() => setExpandedId(isExpanded ? null : card.id)}
                 >
-                  {/* Number badge */}
-                  <span className="w-8 text-center text-xs font-mono text-purple-500 shrink-0">
-                    {card.arcana === "major" ? (typeof card.number === "number" ? card.number.toString().padStart(2, "0") : card.number) : card.number}
+                  {/* Número */}
+                  <span className="w-7 text-center text-xs font-mono text-[#c4a86a] shrink-0 tabular-nums">
+                    {numStr}
                   </span>
 
+                  {/* Símbolo do naipe */}
+                  {meta && (
+                    <span className={`text-sm ${meta.color} shrink-0`}>{meta.symbol}</span>
+                  )}
+                  {!meta && card.arcana === "major" && (
+                    <span className="text-sm text-[#9a7332] shrink-0">✦</span>
+                  )}
+
+                  {/* Nomes */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-medium text-sm text-[#e8e0f0] truncate">{card.name_pt}</span>
-                      <span className="text-xs text-purple-500 truncate">{card.name_en}</span>
+                    <div className="flex items-baseline gap-1.5 min-w-0">
+                      <span className="font-medium text-sm text-[#1c0e04] truncate">{card.name_pt}</span>
+                      {card.name_pt !== card.name_en && (
+                        <span className="text-xs text-[#9a7332]/60 truncate">{card.name_en}</span>
+                      )}
                     </div>
-                    {card.suit && (
-                      <span className={`text-xs ${suitColor} opacity-70`}>{card.suit} · {card.element}</span>
-                    )}
-                    {!card.suit && (
-                      <span className="text-xs text-purple-500 opacity-70">Arcano Maior · {card.element}</span>
-                    )}
+                    <div className="text-[10px] text-[#9a7332]/60 flex items-center gap-1">
+                      {card.suit ? (
+                        <span>{card.suit} · {card.element}</span>
+                      ) : (
+                        <span>Arcano Maior · {card.element}</span>
+                      )}
+                      {card.thoth_name !== card.name_en && (
+                        <span className="text-[#c4a86a]/70">· Thoth: {card.thoth_name}</span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  {/* Ações */}
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       onClick={(e) => { e.stopPropagation(); onSelect(card); }}
-                      className="px-3 py-1 text-xs bg-[#c9a84c]/20 hover:bg-[#c9a84c]/40 text-[#f0d080] rounded-lg border border-[#c9a84c]/30 transition-all font-medium"
+                      className="px-2.5 py-1 text-xs bg-[#1c0e04] hover:bg-[#3a2010] text-[#e8d898] rounded-lg transition-all font-medium"
                     >
                       Escolher
                     </button>
-                    {isExpanded ? <ChevronUp size={14} className="text-purple-500" /> : <ChevronDown size={14} className="text-purple-500" />}
+                    {isExpanded
+                      ? <ChevronUp size={13} className="text-[#9a7332]/50" />
+                      : <ChevronDown size={13} className="text-[#9a7332]/50" />
+                    }
                   </div>
                 </div>
 
-                {/* Quick preview */}
+                {/* Preview expandido */}
                 {isExpanded && (
-                  <div className="px-4 pb-3 pt-1 bg-purple-950/20 border-t border-purple-900/30 animate-fade-in">
+                  <div className="px-4 pt-2 pb-3 bg-[#faf4e8]/60 border-t border-[#ddd0a8]/60 animate-fade-in">
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {card.keywords_upright.slice(0, 5).map((kw) => (
-                        <span key={kw} className="px-2 py-0.5 text-xs bg-purple-900/40 text-purple-300 rounded-full">{kw}</span>
+                        <span
+                          key={kw}
+                          className="px-2 py-0.5 text-[10px] bg-[#f0e6d0] text-[#4a3520] border border-[#ddd0a8] rounded-full"
+                        >
+                          {kw}
+                        </span>
                       ))}
                     </div>
-                    <p className="text-xs text-purple-300/70 line-clamp-3 leading-relaxed">{card.meaning_upright}</p>
-                    {card.thoth_name !== card.name_en && (
-                      <p className="text-xs text-[#c9a84c]/60 mt-1.5">Thoth: {card.thoth_name}</p>
-                    )}
+                    <p className="text-xs text-[#4a3520]/80 line-clamp-3 leading-relaxed">
+                      {card.meaning_upright}
+                    </p>
                   </div>
                 )}
               </div>
@@ -151,8 +219,17 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
           })}
         </div>
 
-        <div className="px-4 py-2 border-t border-purple-900/40 text-xs text-purple-600 text-center">
-          {filtered.length} cartas disponíveis
+        {/* Footer */}
+        <div className="flex items-center justify-between px-5 py-2.5 border-t border-[#ddd0a8]/60">
+          <span className="text-[10px] text-[#9a7332]/50 font-display uppercase tracking-wider">
+            {filtered.length} cartas
+          </span>
+          <button
+            onClick={onClose}
+            className="text-xs text-[#9a7332]/60 hover:text-[#4a3520] transition-colors flex items-center gap-1"
+          >
+            <X size={11} /> Fechar
+          </button>
         </div>
       </div>
     </div>
