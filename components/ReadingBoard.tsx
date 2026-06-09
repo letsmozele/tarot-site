@@ -60,12 +60,12 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
             onBlur={() => setEditingTitle(false)}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === "Escape") setEditingTitle(false); }}
             placeholder="Nome da leitura..."
-            className="flex-1 bg-transparent border-b border-[#c4a86a]/60 text-[#1c0e04] outline-none font-display text-sm pb-0.5 placeholder-[#9a7332]/40"
+            className="flex-1 bg-transparent border-b border-[#c4a86a]/60 text-[#1c0e04] outline-none font-display text-sm pb-0.5 placeholder-[#7a5820]"
           />
         ) : (
           <button
             onClick={() => setEditingTitle(true)}
-            className="font-display text-sm tracking-wide text-[#9a7332]/60 hover:text-[#9a7332] transition-colors text-left flex items-center gap-1.5"
+            className="font-display text-sm tracking-wide text-[#6b4818] hover:text-[#4a3520] transition-colors text-left flex items-center gap-1.5"
           >
             <span className="text-[#c4a86a]">✦</span>
             {readingTitle || "Clique para nomear esta leitura"}
@@ -76,7 +76,7 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
           {cards.length > 0 && (
             <button
               onClick={clearAll}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] uppercase tracking-wider text-[#b05030]/60 hover:text-[#6b1a1a] border border-[#e8c8b0] hover:border-[#d49070] rounded-lg transition-all"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] uppercase tracking-wider text-[#8a3010] hover:text-[#6b1a1a] border border-[#e8c8b0] hover:border-[#d49070] rounded-lg transition-all"
             >
               <Trash2 size={11} />
               Limpar
@@ -112,13 +112,13 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
             </div>
           </div>
 
-          <h2 className="font-display text-lg font-semibold tracking-widest text-[#1c0e04]/50 uppercase mb-2">
+          <h2 className="font-display text-lg font-semibold tracking-widest text-[#6b4818] uppercase mb-2">
             Grimório Vazio
           </h2>
-          <p className="text-sm text-[#9a7332]/60 mb-1 max-w-xs leading-relaxed">
+          <p className="text-sm text-[#7a5820] mb-1 max-w-xs leading-relaxed">
             Embaralhe suas cartas, faça sua pergunta ao universo
           </p>
-          <p className="text-xs text-[#9a7332]/40 mb-8 max-w-xs">
+          <p className="text-xs text-[#9a7332] mb-8 max-w-xs">
             e selecione cada carta que saiu na sua tiragem
           </p>
 
@@ -131,7 +131,7 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
           </button>
 
           {/* Dica */}
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#c4a86a]/40 mt-8">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#7a5820] mt-8">
             78 cartas · Rider-Waite-Smith & Thoth
           </p>
         </div>
@@ -156,7 +156,7 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
           {cards.length < 15 && (
             <button
               onClick={() => setShowPicker(true)}
-              className="w-full py-3 border border-dashed border-[#c4a86a]/40 rounded-2xl text-[#9a7332]/60 hover:border-[#9a7332]/60 hover:text-[#9a7332] hover:bg-[#faf4e8] transition-all text-xs flex items-center justify-center gap-2 font-display uppercase tracking-wider"
+              className="w-full py-3 border border-dashed border-[#c4a86a]/50 rounded-2xl text-[#6b4818] hover:border-[#9a7332] hover:text-[#4a3520] hover:bg-[#faf4e8] transition-all text-xs flex items-center justify-center gap-2 font-display uppercase tracking-wider"
             >
               <Plus size={12} />
               Adicionar carta

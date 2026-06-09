@@ -83,10 +83,10 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar por nome ou palavra-chave..."
-            className="flex-1 bg-transparent text-[#1c0e04] placeholder-[#9a7332]/50 outline-none text-sm"
+            className="flex-1 bg-transparent text-[#1c0e04] placeholder-[#9a7332] outline-none text-sm"
           />
           {query && (
-            <button onClick={() => setQuery("")} className="text-[#9a7332]/60 hover:text-[#9a7332]">
+            <button onClick={() => setQuery("")} className="text-[#6b4818] hover:text-[#4a3520]">
               <X size={13} />
             </button>
           )}
@@ -123,8 +123,8 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
         <div className="overflow-y-auto flex-1 px-3 py-2 space-y-0.5">
           {filtered.length === 0 && (
             <div className="text-center py-14">
-              <p className="text-[#9a7332]/50 text-sm font-display">Nenhuma carta encontrada</p>
-              <p className="text-[#9a7332]/30 text-xs mt-1">Tente outro nome ou palavra-chave</p>
+              <p className="text-[#7a5820] text-sm font-display">Nenhuma carta encontrada</p>
+              <p className="text-[#9a7332] text-xs mt-1">Tente outro nome ou palavra-chave</p>
             </div>
           )}
 
@@ -149,7 +149,7 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
                   onClick={() => setExpandedId(isExpanded ? null : card.id)}
                 >
                   {/* Número */}
-                  <span className="w-7 text-center text-xs font-mono text-[#c4a86a] shrink-0 tabular-nums">
+                  <span className="w-7 text-center text-xs font-mono text-[#7a5820] shrink-0 tabular-nums">
                     {numStr}
                   </span>
 
@@ -166,17 +166,17 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
                     <div className="flex items-baseline gap-1.5 min-w-0">
                       <span className="font-medium text-sm text-[#1c0e04] truncate">{card.name_pt}</span>
                       {card.name_pt !== card.name_en && (
-                        <span className="text-xs text-[#9a7332]/60 truncate">{card.name_en}</span>
+                        <span className="text-xs text-[#6b4818] truncate">{card.name_en}</span>
                       )}
                     </div>
-                    <div className="text-[10px] text-[#9a7332]/60 flex items-center gap-1">
+                    <div className="text-[10px] text-[#6b4818] flex items-center gap-1">
                       {card.suit ? (
                         <span>{card.suit} · {card.element}</span>
                       ) : (
                         <span>Arcano Maior · {card.element}</span>
                       )}
                       {card.thoth_name !== card.name_en && (
-                        <span className="text-[#c4a86a]/70">· Thoth: {card.thoth_name}</span>
+                        <span className="text-[#7a5820]">· Thoth: {card.thoth_name}</span>
                       )}
                     </div>
                   </div>
@@ -190,8 +190,8 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
                       Escolher
                     </button>
                     {isExpanded
-                      ? <ChevronUp size={13} className="text-[#9a7332]/50" />
-                      : <ChevronDown size={13} className="text-[#9a7332]/50" />
+                      ? <ChevronUp size={13} className="text-[#9a7332]" />
+                      : <ChevronDown size={13} className="text-[#9a7332]" />
                     }
                   </div>
                 </div>
@@ -221,12 +221,12 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
 
         {/* Footer */}
         <div className="flex items-center justify-between px-5 py-2.5 border-t border-[#ddd0a8]/60">
-          <span className="text-[10px] text-[#9a7332]/50 font-display uppercase tracking-wider">
+          <span className="text-[10px] text-[#6b4818] font-display uppercase tracking-wider">
             {filtered.length} cartas
           </span>
           <button
             onClick={onClose}
-            className="text-xs text-[#9a7332]/60 hover:text-[#4a3520] transition-colors flex items-center gap-1"
+            className="text-xs text-[#6b4818] hover:text-[#4a3520] transition-colors flex items-center gap-1"
           >
             <X size={11} /> Fechar
           </button>

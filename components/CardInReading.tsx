@@ -87,7 +87,7 @@ export default function CardInReading({
           ) : (
             <button
               onClick={() => setEditingPosition(true)}
-              className="text-[10px] uppercase tracking-[0.15em] text-[#9a7332]/60 hover:text-[#9a7332] transition-colors mb-1.5 text-left flex items-center gap-1"
+              className="text-[10px] uppercase tracking-[0.15em] text-[#6b4818] hover:text-[#4a3520] transition-colors mb-1.5 text-left flex items-center gap-1"
             >
               <span>✦</span>
               {item.position || "Clique para nomear posição"}
@@ -102,10 +102,10 @@ export default function CardInReading({
               {cardName}
             </h3>
             {deckType === "thoth" && card.thoth_name !== card.name_en && (
-              <span className="text-[10px] text-[#9a7332]/50 font-display">Thoth</span>
+              <span className="text-[10px] text-[#6b4818] font-display">Thoth</span>
             )}
             {deckType === "rws" && card.name_pt !== card.name_en && (
-              <span className="text-xs text-[#9a7332]/60">{card.name_en}</span>
+              <span className="text-xs text-[#6b4818]">{card.name_en}</span>
             )}
           </div>
 
@@ -120,10 +120,10 @@ export default function CardInReading({
               </span>
             )}
             {card.astrology && (
-              <span className="text-[11px] text-[#9a7332]/60">· {card.astrology}</span>
+              <span className="text-[11px] text-[#6b4818]">· {card.astrology}</span>
             )}
             {deckType === "thoth" && card.thoth_title && (
-              <span className="text-[10px] text-[#9a7332]/50 italic">· {card.thoth_title}</span>
+              <span className="text-[10px] text-[#6b4818] italic">· {card.thoth_title}</span>
             )}
           </div>
         </div>
@@ -154,7 +154,7 @@ export default function CardInReading({
           {/* Remover */}
           <button
             onClick={onRemove}
-            className="p-1.5 rounded-lg bg-[#fdf5f0] border border-[#e8c8b0] text-[#b05030]/60 hover:text-[#6b1a1a] hover:border-[#d49070] transition-all"
+            className="p-1.5 rounded-lg bg-[#fdf5f0] border border-[#e8c8b0] text-[#8a3010] hover:text-[#6b1a1a] hover:border-[#d49070] transition-all"
           >
             <X size={12} />
           </button>
@@ -199,29 +199,29 @@ export default function CardInReading({
 
           {/* Significado principal */}
           <div>
-            <p className="text-[10px] uppercase tracking-[0.18em] font-display text-[#9a7332] mb-2">
+            <p className="text-[10px] uppercase tracking-[0.18em] font-display text-[#5a3a10] mb-2">
               {deckType === "rws" ? "Rider-Waite" : "Thoth"} — {isReversed ? "Invertida" : "Normal"}
             </p>
-            <p className="text-sm text-[#1c0e04]/80 leading-relaxed">{meaning}</p>
+            <p className="text-sm text-[#4a3520] leading-relaxed">{meaning}</p>
           </div>
 
           {/* Significado do deck secundário */}
           {deckType === "rws" && card.thoth_meaning && (
             <details className="group">
-              <summary className="flex items-center gap-1.5 cursor-pointer text-[10px] uppercase tracking-wider text-[#9a7332]/60 hover:text-[#9a7332] transition-colors">
+              <summary className="flex items-center gap-1.5 cursor-pointer text-[10px] uppercase tracking-wider text-[#6b4818] hover:text-[#4a3520] transition-colors">
                 <span className="text-[#c4a86a]">◈</span>
                 Ver significado Thoth
                 <ChevronDown size={10} className="group-open:rotate-180 transition-transform ml-auto" />
               </summary>
               <div className="mt-2.5 pl-3 border-l-2 border-[#c4a86a]/30 space-y-1.5">
                 {card.thoth_name !== card.name_en && (
-                  <p className="text-[10px] uppercase tracking-wider text-[#9a7332]/70 font-display">
+                  <p className="text-[10px] uppercase tracking-wider text-[#6b4818] font-display">
                     {card.thoth_name}{card.thoth_title ? ` — ${card.thoth_title}` : ""}
                   </p>
                 )}
-                <p className="text-sm text-[#4a3520]/70 leading-relaxed">{card.thoth_meaning}</p>
+                <p className="text-sm text-[#4a3520] leading-relaxed">{card.thoth_meaning}</p>
                 {card.thoth_differences && (
-                  <p className="text-xs text-[#9a7332]/50 italic">{card.thoth_differences}</p>
+                  <p className="text-xs text-[#6b4818] italic">{card.thoth_differences}</p>
                 )}
               </div>
             </details>
@@ -229,13 +229,13 @@ export default function CardInReading({
 
           {deckType === "thoth" && (
             <details className="group">
-              <summary className="flex items-center gap-1.5 cursor-pointer text-[10px] uppercase tracking-wider text-[#9a7332]/60 hover:text-[#9a7332] transition-colors">
+              <summary className="flex items-center gap-1.5 cursor-pointer text-[10px] uppercase tracking-wider text-[#6b4818] hover:text-[#4a3520] transition-colors">
                 <span className="text-[#c4a86a]">✦</span>
                 Ver significado Rider-Waite
                 <ChevronDown size={10} className="group-open:rotate-180 transition-transform ml-auto" />
               </summary>
-              <div className="mt-2.5 pl-3 border-l-2 border-[#ddd0a8] ">
-                <p className="text-sm text-[#4a3520]/70 leading-relaxed">
+              <div className="mt-2.5 pl-3 border-l-2 border-[#ddd0a8]">
+                <p className="text-sm text-[#4a3520] leading-relaxed">
                   {reversed ? card.meaning_reversed : card.meaning_upright}
                 </p>
               </div>
@@ -244,18 +244,18 @@ export default function CardInReading({
 
           {/* Correspondências cabalísticas — só Arcanos Maiores */}
           {card.arcana === "major" && (card.hebrew_letter || card.tree_of_life_path) && (
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[#9a7332]/60 border-t border-[#ddd0a8]/60 pt-3">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-[#6b4818] border-t border-[#ddd0a8]/60 pt-3">
               {card.hebrew_letter && (
                 <span>
                   Letra hebraica:{" "}
-                  <strong className="text-[#9a7332]/80">{card.hebrew_letter}</strong>
+                  <strong className="text-[#5a3a10]">{card.hebrew_letter}</strong>
                   {card.hebrew_letter_meaning && (
-                    <span className="text-[#9a7332]/40"> ({card.hebrew_letter_meaning})</span>
+                    <span className="text-[#7a5820]"> ({card.hebrew_letter_meaning})</span>
                   )}
                 </span>
               )}
               {card.tree_of_life_path && (
-                <span className="text-[#9a7332]/50">{card.tree_of_life_path}</span>
+                <span className="text-[#7a5820]">{card.tree_of_life_path}</span>
               )}
             </div>
           )}

@@ -64,7 +64,7 @@ export default function Home() {
 
       {/* ─── Footer ─── */}
       <footer className="border-t border-[#ddd0a8] py-4 text-center">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[#9a7332]/60">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-[#7a5820]">
           78 cartas · Rider-Waite-Smith & Thoth · Arcanos Maiores e Menores
         </p>
       </footer>
