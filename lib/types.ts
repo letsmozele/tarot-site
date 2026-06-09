@@ -14,12 +14,12 @@ export interface TarotCard {
   keywords_reversed: string[];
   meaning_upright: string;
   meaning_reversed: string;
-  thoth_name: string;
+  thoth_name?: string;
   thoth_title?: string;
   thoth_path?: string;
   thoth_astrology?: string;
   thoth_sephira?: string;
-  thoth_meaning: string;
+  thoth_meaning?: string;
   thoth_differences?: string;
   image_description?: string;
 }

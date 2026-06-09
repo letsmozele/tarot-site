@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { RotateCcw, X, ChevronDown, ChevronUp } from "lucide-react";
 import { ReadingCard, DeckType } from "@/lib/types";
-import { SUIT_META, ELEMENT_SYMBOLS, getCardDisplayName, getCardMeaning } from "@/lib/cards";
+import { SUIT_META, ELEMENT_SYMBOLS, getCardDisplayName, getCardMeaning, hasThothData } from "@/lib/cards";
 
 interface CardInReadingProps {
   item: ReadingCard;
@@ -101,8 +101,9 @@ export default function CardInReading({
             }`}>
               {cardName}
             </h3>
-            {deckType === "thoth" && card.thoth_name !== card.name_en && (
-              <span className="text-[10px] text-[#6b4818] font-display">Thoth</span>
+            {/* Título Thoth (ex: "Love", "Sorrow", "The Aeon") */}
+            {deckType === "thoth" && card.thoth_title && (
+              <span className="text-xs text-[#9a7332] italic font-display">{card.thoth_title}</span>
             )}
             {deckType === "rws" && card.name_pt !== card.name_en && (
               <span className="text-xs text-[#6b4818]">{card.name_en}</span>
@@ -119,11 +120,14 @@ export default function CardInReading({
                 · {card.suit}
               </span>
             )}
-            {card.astrology && (
+            {/* Em modo Thoth usa thoth_astrology quando disponível */}
+            {deckType === "thoth" && card.thoth_astrology ? (
+              <span className="text-[11px] text-[#6b4818]">· {card.thoth_astrology}</span>
+            ) : card.astrology ? (
               <span className="text-[11px] text-[#6b4818]">· {card.astrology}</span>
-            )}
-            {deckType === "thoth" && card.thoth_title && (
-              <span className="text-[10px] text-[#6b4818] italic">· {card.thoth_title}</span>
+            ) : null}
+            {deckType === "thoth" && card.thoth_sephira && (
+              <span className="text-[10px] text-[#7a5820]">· {card.thoth_sephira}</span>
             )}
           </div>
         </div>
@@ -203,23 +207,36 @@ export default function CardInReading({
               {deckType === "rws" ? "Rider-Waite" : "Thoth"} — {isReversed ? "Invertida" : "Normal"}
             </p>
             <p className="text-sm text-[#4a3520] leading-relaxed">{meaning}</p>
+            {/* Aviso para arcanos menores em modo Thoth sem meaning dedicado */}
+            {deckType === "thoth" && !card.thoth_meaning && (
+              <p className="text-[10px] text-[#9a7332] italic mt-1.5 flex items-center gap-1">
+                <span>◈</span> Significado baseado na tradição Rider-Waite; título Thoth: <strong className="not-italic">{card.thoth_title || card.name_en}</strong>
+              </p>
+            )}
           </div>
 
           {/* Significado do deck secundário */}
-          {deckType === "rws" && card.thoth_meaning && (
+          {deckType === "rws" && hasThothData(card) && (
             <details className="group">
               <summary className="flex items-center gap-1.5 cursor-pointer text-[10px] uppercase tracking-wider text-[#6b4818] hover:text-[#4a3520] transition-colors">
                 <span className="text-[#c4a86a]">◈</span>
-                Ver significado Thoth
+                Ver correspondências Thoth
                 <ChevronDown size={10} className="group-open:rotate-180 transition-transform ml-auto" />
               </summary>
               <div className="mt-2.5 pl-3 border-l-2 border-[#c4a86a]/30 space-y-1.5">
-                {card.thoth_name !== card.name_en && (
+                {(card.thoth_name || card.thoth_title) && (
                   <p className="text-[10px] uppercase tracking-wider text-[#6b4818] font-display">
-                    {card.thoth_name}{card.thoth_title ? ` — ${card.thoth_title}` : ""}
+                    {card.thoth_name || card.name_en}{card.thoth_title ? ` — ${card.thoth_title}` : ""}
                   </p>
                 )}
-                <p className="text-sm text-[#4a3520] leading-relaxed">{card.thoth_meaning}</p>
+                {card.thoth_meaning ? (
+                  <p className="text-sm text-[#4a3520] leading-relaxed">{card.thoth_meaning}</p>
+                ) : (
+                  <div className="space-y-1">
+                    {card.thoth_astrology && <p className="text-xs text-[#6b4818]">♆ {card.thoth_astrology}</p>}
+                    {card.thoth_sephira && <p className="text-xs text-[#6b4818]">◈ {card.thoth_sephira}</p>}
+                  </div>
+                )}
                 {card.thoth_differences && (
                   <p className="text-xs text-[#6b4818] italic">{card.thoth_differences}</p>
                 )}

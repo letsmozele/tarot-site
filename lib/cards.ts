@@ -19,11 +19,9 @@ export function getCardsBySuit(suit: string): TarotCard[] {
   return db.cards.filter((c) => c.suit === suit);
 }
 
-function normalize(s: string) {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "");
+function normalize(s: string | undefined | null): string {
+  if (!s) return "";
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
 export function searchCards(query: string): TarotCard[] {
@@ -45,7 +43,8 @@ export function getCardById(id: string): TarotCard | undefined {
 }
 
 export function getCardDisplayName(card: TarotCard, deck: DeckType): string {
-  return deck === "thoth" ? card.thoth_name : card.name_pt;
+  if (deck === "thoth") return card.thoth_name || card.name_en;
+  return card.name_pt;
 }
 
 export function getCardMeaning(
@@ -54,7 +53,12 @@ export function getCardMeaning(
   reversed: boolean
 ): string {
   if (reversed) return card.meaning_reversed;
-  return deck === "thoth" ? card.thoth_meaning || card.meaning_upright : card.meaning_upright;
+  if (deck === "thoth" && card.thoth_meaning) return card.thoth_meaning;
+  return card.meaning_upright;
+}
+
+export function hasThothData(card: TarotCard): boolean {
+  return Boolean(card.thoth_meaning || card.thoth_title);
 }
 
 export const SUITS = ["Copas", "Paus", "Espadas", "Ouros"] as const;

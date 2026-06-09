@@ -3,19 +3,21 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { X, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { getAllCards, SUITS, SUIT_META } from "@/lib/cards";
-import { TarotCard, FilterType } from "@/lib/types";
+import { TarotCard, FilterType, DeckType } from "@/lib/types";
 
 interface CardPickerProps {
   onSelect: (card: TarotCard) => void;
   onClose: () => void;
   excludeIds?: string[];
+  deckType?: DeckType;
 }
 
-function normalize(s: string) {
+function normalize(s: string | undefined | null): string {
+  if (!s) return "";
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 }
 
-export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardPickerProps) {
+export default function CardPicker({ onSelect, onClose, excludeIds = [], deckType = "rws" }: CardPickerProps) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -37,6 +39,7 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
           normalize(c.name_pt).includes(q) ||
           normalize(c.name_en).includes(q) ||
           normalize(c.thoth_name).includes(q) ||
+          normalize(c.thoth_title).includes(q) ||
           c.keywords_upright.some((k) => normalize(k).includes(q))
       );
     }
@@ -164,18 +167,30 @@ export default function CardPicker({ onSelect, onClose, excludeIds = [] }: CardP
                   {/* Nomes */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-1.5 min-w-0">
-                      <span className="font-medium text-sm text-[#1c0e04] truncate">{card.name_pt}</span>
-                      {card.name_pt !== card.name_en && (
-                        <span className="text-xs text-[#6b4818] truncate">{card.name_en}</span>
-                      )}
+                      {/* Nome principal muda conforme o deck */}
+                      <span className="font-medium text-sm text-[#1c0e04] truncate">
+                        {deckType === "thoth" ? (card.thoth_name || card.name_en) : card.name_pt}
+                      </span>
+                      {/* Nome secundário */}
+                      {deckType === "thoth"
+                        ? card.thoth_title && (
+                            <span className="text-xs text-[#9a7332] italic truncate">{card.thoth_title}</span>
+                          )
+                        : card.name_pt !== card.name_en && (
+                            <span className="text-xs text-[#6b4818] truncate">{card.name_en}</span>
+                          )
+                      }
                     </div>
-                    <div className="text-[10px] text-[#6b4818] flex items-center gap-1">
+                    <div className="text-[10px] text-[#6b4818] flex items-center gap-1 flex-wrap">
                       {card.suit ? (
                         <span>{card.suit} · {card.element}</span>
                       ) : (
                         <span>Arcano Maior · {card.element}</span>
                       )}
-                      {card.thoth_name !== card.name_en && (
+                      {deckType === "thoth" && card.thoth_astrology && (
+                        <span className="text-[#7a5820]">· {card.thoth_astrology}</span>
+                      )}
+                      {deckType === "rws" && card.thoth_name && card.thoth_name !== card.name_en && (
                         <span className="text-[#7a5820]">· Thoth: {card.thoth_name}</span>
                       )}
                     </div>

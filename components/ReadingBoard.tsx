@@ -171,6 +171,7 @@ export default function ReadingBoard({ deckType }: ReadingBoardProps) {
           onSelect={addCard}
           onClose={() => setShowPicker(false)}
           excludeIds={excludeIds}
+          deckType={deckType}
         />
       )}
     </div>
